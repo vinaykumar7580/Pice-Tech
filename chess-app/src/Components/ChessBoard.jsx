@@ -1,4 +1,27 @@
 import { Box } from "@chakra-ui/react";
+import {
+  FaChessPawn,
+  FaChessRook,
+  FaChessKnight,
+  FaChessBishop,
+  FaChessQueen,
+  FaChessKing,
+} from "react-icons/fa";
+
+const pieceIcons = {
+  bP: <FaChessPawn style={{ color: "black", fontSize:"25px" }} />,
+  bR: <FaChessRook style={{ color: "black", fontSize:"25px" }} />,
+  bN: <FaChessKnight style={{ color: "black", fontSize:"25px" }} />,
+  bB: <FaChessBishop style={{ color: "black", fontSize:"25px" }} />,
+  bQ: <FaChessQueen style={{ color: "black", fontSize:"25px" }} />,
+  bK: <FaChessKing style={{ color: "black", fontSize:"25px" }} />,
+  wP: <FaChessPawn style={{ color: "white", fontSize:"25px" }} />,
+  wR: <FaChessRook style={{ color: "white", fontSize:"25px" }} />,
+  wN: <FaChessKnight style={{ color: "white", fontSize:"25px" }} />,
+  wB: <FaChessBishop style={{ color: "white", fontSize:"25px" }} />,
+  wQ: <FaChessQueen style={{ color: "white", fontSize:"25px" }} />,
+  wK: <FaChessKing style={{ color: "white", fontSize:"25px" }} />,
+};
 
 function ChessBoard({ board, handleSelectedBox, selectedBox, validMoves }) {
   return (
@@ -7,7 +30,7 @@ function ChessBoard({ board, handleSelectedBox, selectedBox, validMoves }) {
       gridTemplateColumns={"repeat(8, 1fr)"}
       justifyContent={"center"}
       alignItems={"center"}
-      color={"yellow"}
+      color={"red"}
       fontWeight={"bold"}
     >
       {board &&
@@ -23,6 +46,9 @@ function ChessBoard({ board, handleSelectedBox, selectedBox, validMoves }) {
               <Box
                 key={`${rowIndex}-${colIndex}`}
                 h={"70px"}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
                 bg={(rowIndex + colIndex) % 2 === 0 ? "gray.300" : "gray.700"}
                 border={
                   isSelected
@@ -33,7 +59,7 @@ function ChessBoard({ board, handleSelectedBox, selectedBox, validMoves }) {
                 }
                 onClick={() => handleSelectedBox(rowIndex, colIndex)}
               >
-                {col}
+                {col ? pieceIcons[col] : null}
               </Box>
             );
           })

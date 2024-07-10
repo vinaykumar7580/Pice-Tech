@@ -1,6 +1,21 @@
-import { Box, Heading, Text, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Heading,
+  Image,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
 import ChessBoard from "../Components/ChessBoard";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const initialState = [
   ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
@@ -19,9 +34,12 @@ function Dashboard() {
   const [selectedBox, setSelectedBox] = useState(null);
   const [error, setError] = useState("");
   const [validMoves, setValidMoves] = useState([]);
+  const [winner, setWinner] = useState(null);
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const players = JSON.parse(sessionStorage.getItem("players"));
   const toast = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (selectedBox) {
@@ -58,18 +76,21 @@ function Dashboard() {
       return;
     }
 
-    
     newBoard[from.row][from.col] = null;
     newBoard[to.row][to.col] = piece;
 
     setBoard(newBoard);
-    setCurrentPlayer(currentPlayer === "w" ? "b" : "w");
-    setError(""); 
+    if (checkWinner(newBoard, currentPlayer)) {
+      setWinner(currentPlayer === "w" ? players.player1 : players.player2);
+      onOpen();
+    } else {
+      setCurrentPlayer(currentPlayer === "w" ? "b" : "w");
+    }
+    setError("");
   };
 
   const isValid = (from, to, board, currentPlayer) => {
     const piece = board[from.row][from.col];
-    
 
     if (!piece || piece.charAt(0) !== currentPlayer) {
       return false;
@@ -115,16 +136,23 @@ function Dashboard() {
   };
 
   const validateRookMove = (from, to, board) => {
-    if (from.row !== to.row && from.col !== to.col) return false;
+    if (from.row !== to.row && from.col !== to.col) {
+      return false;
+    }
+
     if (from.row === to.row) {
       const step = from.col < to.col ? 1 : -1;
       for (let col = from.col + step; col !== to.col; col += step) {
-        if (board[from.row][col]) return false;
+        if (board[from.row][col]) {
+          return false;
+        }
       }
     } else {
       const step = from.row < to.row ? 1 : -1;
       for (let row = from.row + step; row !== to.row; row += step) {
-        if (board[row][from.col]) return false;
+        if (board[row][from.col]) {
+          return false;
+        }
       }
     }
     return true;
@@ -161,6 +189,7 @@ function Dashboard() {
 
   const calculateValidMoves = (from, board, currentPlayer) => {
     const moves = [];
+
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         if (isValid(from, { row, col }, board, currentPlayer)) {
@@ -169,6 +198,35 @@ function Dashboard() {
       }
     }
     return moves;
+  };
+
+  const checkWinner = (board, currentPlayer) => {
+    const opponent = currentPlayer === "w" ? "b" : "w";
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        if (board[row][col] && board[row][col].charAt(0) === opponent) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const handleQuit = () => {
+    setWinner(currentPlayer === "w" ? players.player2 : players.player1);
+    onOpen();
+  };
+
+  const handleRestart = () => {
+    setBoard(initialState);
+    setCurrentPlayer("w");
+    setSelectedBox(null);
+    setWinner(null);
+    onClose();
+  };
+
+  const handleEndGame = () => {
+    navigate("/");
   };
 
   return (
@@ -196,7 +254,9 @@ function Dashboard() {
               Player 2 : {players?.player2}
             </Heading>
           </Box>
-          <Box></Box>
+          <Button colorScheme={"red"} onClick={handleQuit}>
+            Quit
+          </Button>
         </Box>
         <Box>
           <ChessBoard
@@ -221,7 +281,45 @@ function Dashboard() {
               Player 1 : {players?.player1}
             </Heading>
           </Box>
-          <Box></Box>
+          {winner && (
+            <Box>
+              <Modal isOpen={isOpen} onClose={handleEndGame} isCentered>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Game Over</ModalHeader>
+                  <ModalBody>
+                    <Box
+                      w={"50%"}
+                      m={"auto"}
+                      textAlign={"center"}
+                      display={"flex"}
+                      flexDirection={"column"}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                    >
+                      <Box>
+                        <Image
+                          w={"100%"}
+                          h={"100%"}
+                          src="https://cdn-icons-png.flaticon.com/128/1021/1021202.png"
+                          alt="win"
+                        />
+                      </Box>
+                      <Text fontSize={"25px"} fontWeight={"bold"} fontFamily={"serif"} mt={"10px"}>{winner} Wins!</Text>
+                    </Box>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button colorScheme={"blue"} mr={3} onClick={handleRestart}>
+                      Start Again
+                    </Button>
+                    <Button variant="ghost" onClick={handleEndGame}>
+                      End Game
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>
