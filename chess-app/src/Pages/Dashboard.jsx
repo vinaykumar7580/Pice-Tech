@@ -142,19 +142,20 @@ function Dashboard() {
 
     if (from.row === to.row) {
       const step = from.col < to.col ? 1 : -1;
-      for (let col = from.col + step; col !== to.col; col += step) {
+      for (let col = from.col + step; col !== to.col + step; col += step) {
         if (board[from.row][col]) {
           return false;
         }
       }
     } else {
       const step = from.row < to.row ? 1 : -1;
-      for (let row = from.row + step; row !== to.row; row += step) {
+      for (let row = from.row + step; row !== to.row + step; row += step) {
         if (board[row][from.col]) {
           return false;
         }
       }
     }
+
     return true;
   };
 
@@ -305,7 +306,14 @@ function Dashboard() {
                           alt="win"
                         />
                       </Box>
-                      <Text fontSize={"25px"} fontWeight={"bold"} fontFamily={"serif"} mt={"10px"}>{winner} Wins!</Text>
+                      <Text
+                        fontSize={"25px"}
+                        fontWeight={"bold"}
+                        fontFamily={"serif"}
+                        mt={"10px"}
+                      >
+                        {winner} Wins!
+                      </Text>
                     </Box>
                   </ModalBody>
                   <ModalFooter>
