@@ -50,6 +50,7 @@ function ChessBoard({ board, handleSelectedBox, selectedBox, validMoves }) {
                 justifyContent={"center"}
                 alignItems={"center"}
                 bg={(rowIndex + colIndex) % 2 === 0 ? "gray.300" : "gray.700"}
+                cursor={"pointer"}
                 border={
                   isSelected
                     ? "3px solid yellow"
