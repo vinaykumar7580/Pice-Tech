@@ -26,6 +26,10 @@ This is a web-based chess application implementing the Anti-Chess variant. Anti-
 - Capturing is mandatory; if multiple captures are possible, all non-capture moves are invalid.
 
 ## Screenshots
-![Players Page Screenshot](./screenshots/game.png)
-![Dashboard Page Screenshot](./screenshots/game.png)
-![Game Over Modal](./screenshots/game-over.png)
+![Players Page Screenshot](https://github.com/vinaykumar7580/Pice-Tech/blob/main/chess-app/public/chess-app-players.png?raw=true)
+
+
+![Dashboard Page Screenshot](https://github.com/vinaykumar7580/Pice-Tech/blob/main/chess-app/public/chess-app-dashboard.png?raw=true)
+
+
+![Game Over Modal](https://github.com/vinaykumar7580/Pice-Tech/blob/main/chess-app/public/chess-app-modal.png?raw=true)
